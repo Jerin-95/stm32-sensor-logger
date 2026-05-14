@@ -1,0 +1,24 @@
+﻿# Build output
+Debug/
+Release/
+build/
+*.o
+*.d
+*.elf
+*.bin
+*.hex
+*.map
+*.list
+*.su
+
+# CubeIDE / Eclipse settings (sometimes — leave .project and .cproject as IS)
+.metadata/
+.settings/
+RemoteSystemsTempFiles/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# AI tool logs (private notes only — public log is ai-usage.md)
+ai-bugs.md
