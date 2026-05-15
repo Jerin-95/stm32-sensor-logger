@@ -32,6 +32,8 @@ Two-rate non-blocking blink using counter + modulo: LD2 at 1 Hz, external LED at
 ### Day 3 — May 14, 2026
 External push button on D8 (PA9, internal pull-up). When pressed, base tick drops from 100 ms to 30 ms — both LEDs blink ~3× faster. Active-LOW input. First GPIO input pin.
 
+### Day 4 — May 15, 2026
+UART output over USART2 via ST-Link virtual COM port. printf retargeted by overriding ``_write()`` to forward bytes through ``HAL_UART_Transmit``. Startup banner with build timestamp. Edge-detected button press/release events logged with counter and delay state. Verified on Tera Term at 115200 8N1.
 ---
 
 This project uses AI-assisted development (Claude). See `ai-usage.md` for the usage log.

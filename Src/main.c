@@ -21,9 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
 /* USER CODE END Includes */
-
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
@@ -90,31 +89,56 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+    printf("\r\n");
+    printf("====================================\r\n");
+    printf("  STM32F411RE - Day 4 - UART Hello\r\n");
+    printf("  Build: %s %s\r\n", __DATE__, __TIME__);
+    printf("====================================\r\n");
+    /* USER CODE END 2 */
 
-  /* USER CODE END 2 */
+    /* USER CODE BEGIN WHILE */
+      uint32_t counter = 0;
+      uint32_t base_delay = 100;
+      GPIO_PinState last_btn_state = GPIO_PIN_SET;  // start in released state
+      while (1)
+      {
+        /* USER CODE END WHILE */
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-    uint32_t counter = 0;
-    while (1)
-    {
-    /* USER CODE END WHILE */
+        /* USER CODE BEGIN 3 */
+        // Read button. Active-LOW: pressed = GPIO_PIN_RESET, released = GPIO_PIN_SET
+        GPIO_PinState btn_state = HAL_GPIO_ReadPin(USER_BTN_GPIO_Port, USER_BTN_Pin);
 
-    /* USER CODE BEGIN 3 */
-      // External LED toggles every 200ms (2.5 Hz)
-      if (counter % 2 == 0) {
-        HAL_GPIO_TogglePin(EXT_LED_GPIO_Port, EXT_LED_Pin);
-      }
+        // Detect button state CHANGES (edge detection) and print
+        if (btn_state != last_btn_state) {
+          if (btn_state == GPIO_PIN_RESET) {
+            printf("[%lu] Button pressed - fast mode\r\n", counter);
+            base_delay = 30;
+          } else {
+            printf("[%lu] Button released - normal mode\r\n", counter);
+            base_delay = 100;
+          }
+          last_btn_state = btn_state;
+        }
 
-      // LD2 onboard toggles every 500ms (1 Hz)
-      if (counter % 5 == 0) {
-        HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-      }
+        // Print counter every 10 ticks (~1 second at base_delay=100)
+        if (counter % 10 == 0) {
+          printf("[%lu] tick (delay=%lu ms)\r\n", counter, base_delay);
+        }
 
-      HAL_Delay(100);
-      counter++;
-      }
-  /* USER CODE END 3 */
+        // External LED toggles every 2 ticks
+        if (counter % 2 == 0) {
+          HAL_GPIO_TogglePin(EXT_LED_GPIO_Port, EXT_LED_Pin);
+        }
+
+        // LD2 onboard toggles every 5 ticks
+        if (counter % 5 == 0) {
+          HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+        }
+
+        HAL_Delay(base_delay);
+        counter++;
+        }
+      /* USER CODE END 3 */
 }
 
 /**
@@ -252,6 +276,18 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+/**
+ * Retarget printf() to USART2.
+ * The C library calls _write() whenever printf has bytes to output.
+ * We forward those bytes to USART2 via HAL_UART_Transmit, which
+ * the ST-Link bridge then forwards over USB to the laptop terminal.
+ */
+int _write(int file, char *ptr, int len)
+{
+  HAL_UART_Transmit(&huart2, (uint8_t *)ptr, len, HAL_MAX_DELAY);
+  return len;
+}
 
 /* USER CODE END 4 */
 
