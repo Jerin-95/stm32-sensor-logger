@@ -29,6 +29,9 @@ Onboard LED (LD2 / PA5) blinking at 1 Hz. HAL-based, CubeMX-generated project.
 External LED on D6 (PB10), 330 ohm series resistor.
 Two-rate non-blocking blink using counter + modulo: LD2 at 1 Hz, external LED at 2.5 Hz, base tick 100 ms.
 
+### Day 3 — May 14, 2026
+External push button on D8 (PA9, internal pull-up). When pressed, base tick drops from 100 ms to 30 ms — both LEDs blink ~3× faster. Active-LOW input. First GPIO input pin.
+
 ---
 
 This project uses AI-assisted development (Claude). See `ai-usage.md` for the usage log.
